@@ -23,7 +23,7 @@ export default function Home() {
 
 		const timer = setTimeout(() => {
 			setIsConfettiActive(false);
-		}, 10000);
+		}, 12000);
 
 		return () => clearTimeout(timer);
 	}, []);

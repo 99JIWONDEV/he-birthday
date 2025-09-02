@@ -175,6 +175,7 @@ export default function GiftsPage() {
 				{
 					gift_id: giftId,
 					user_id: user.id,
+					user_email: user.email,
 					custom_description: customDescription,
 				},
 			]);
