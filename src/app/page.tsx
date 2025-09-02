@@ -29,7 +29,7 @@ export default function Home() {
 	}, []);
 
 	return (
-		<div className="min-h-screen flex items-center justify-center py-10">
+		<div className="overflow-y-auto flex items-center justify-center py-10 bg-gradient-to-b from-rose-50 to-rose-100">
 			{isConfettiActive && <ReactConfetti width={windowSize.width} height={windowSize.height} numberOfPieces={200} recycle={false} colors={["#ff0000", "#ffd700", "#ff69b4", "#00ff00", "#ff4500"]} />}
 			<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative mt-10">
 				<h1 className="text-4xl font-extrabold text-rose-600">하은아 생일축하해 🎉</h1>

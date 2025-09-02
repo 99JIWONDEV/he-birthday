@@ -42,7 +42,7 @@ export default function MemoriesPage() {
 	return (
 		<>
 			<Header />
-			<div className="flex-1 flex items-center justify-center">
+			<div className="flex-1 flex items-center justify-center pb-6 bg-gradient-to-b from-rose-50 to-rose-100">
 				<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative">
 					<h1 className="text-2xl font-extrabold text-rose-600">우리의 추억이야 📸</h1>
 					<p className="text-gray-600 text-sm -mt-3">옆으로 넘겨봐!</p>
