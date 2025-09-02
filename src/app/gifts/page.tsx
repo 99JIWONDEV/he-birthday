@@ -75,6 +75,7 @@ export default function GiftsPage() {
 	const [error, setError] = useState("");
 	const [selectedGiftId, setSelectedGiftId] = useState<string | null>(null);
 	const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
+	const [customGift, setCustomGift] = useState("");
 	const [nickname, setNickname] = useState<string>("");
 
 	useEffect(() => {
@@ -156,7 +157,7 @@ export default function GiftsPage() {
 		}
 	};
 
-	const handleSelectGift = async (giftId: string) => {
+	const handleSelectGift = async (giftId: string, customDescription?: string) => {
 		try {
 			const {
 				data: { user },
@@ -170,15 +171,32 @@ export default function GiftsPage() {
 			if (deleteError) throw deleteError;
 
 			// 새로운 선택 추가
-			const { error: insertError } = await supabase.from("selected_gifts").insert([{ gift_id: giftId, user_id: user.id }]);
+			const { error: insertError } = await supabase.from("selected_gifts").insert([
+				{
+					gift_id: giftId,
+					user_id: user.id,
+					custom_description: customDescription,
+				},
+			]);
 
 			if (insertError) throw insertError;
 
-			// 선택한 선물 정보를 프론트엔드 데이터에서 찾기
-			const selectedGift = GIFT_LIST.find((gift) => gift.id === giftId);
-			if (selectedGift) {
-				setSelectedGiftId(giftId);
-				setSelectedGift(selectedGift);
+			if (giftId === "custom") {
+				setSelectedGiftId("custom");
+				setSelectedGift({
+					id: "custom",
+					title: "직접 입력한 선물",
+					description: customDescription || "",
+					image_url: caseImg,
+					url: "#",
+				});
+			} else {
+				// 선택한 선물 정보를 프론트엔드 데이터에서 찾기
+				const selectedGift = GIFT_LIST.find((gift) => gift.id === giftId);
+				if (selectedGift) {
+					setSelectedGiftId(giftId);
+					setSelectedGift(selectedGift);
+				}
 			}
 		} catch (err) {
 			console.error("선물 선택 중 오류:", err);
@@ -223,47 +241,79 @@ export default function GiftsPage() {
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 				<p className="text-gray-600 text-xs text-center -mb-10">카드를 클릭하면 상세페이지로 이동해</p>
 				{selectedGift ? (
-					<a href={selectedGift.url} target="_blank" rel="noopener noreferrer" className="block">
-						<Card key={selectedGift.id} className="overflow-hidden transition-transform hover:scale-105 rounded-xl">
-							{selectedGift.image_url && (
+					<Card key={selectedGift.id} className="overflow-hidden rounded-xl">
+						{selectedGift.id === "custom" ? (
+							<div className="p-6">
+								<h3 className="text-xl font-bold mb-4">{selectedGift.title}</h3>
+								<div className="bg-gray-50 p-4 rounded-lg mb-4">
+									<p className="text-gray-700 whitespace-pre-wrap">{selectedGift.description}</p>
+								</div>
+								<Button disabled className="w-full bg-green-500">
+									내가 입력한 선물
+								</Button>
+							</div>
+						) : (
+							<a href={selectedGift.url} target="_blank" rel="noopener noreferrer" className="block">
 								<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
 									<Image src={selectedGift.image_url} alt={selectedGift.title} fill className="object-contain rounded-t-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
 								</div>
-							)}
-							<CardHeader>
-								<CardTitle className="flex justify-between items-center mt-6">
-									<span>{selectedGift.title}</span>
-								</CardTitle>
-							</CardHeader>
-							<CardContent>
-								<p className="text-gray-600 mt-2">{selectedGift.description}</p>
-								<Button disabled className="w-full bg-green-500 mt-4">
-									내가 선택한 선물
-								</Button>
-							</CardContent>
-						</Card>
-					</a>
+								<CardHeader>
+									<CardTitle className="flex justify-between items-center mt-6">
+										<span>{selectedGift.title}</span>
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<p className="text-gray-600 mt-2">{selectedGift.description}</p>
+									<Button disabled className="w-full bg-green-500 mt-4">
+										내가 선택한 선물
+									</Button>
+								</CardContent>
+							</a>
+						)}
+					</Card>
 				) : (
-					gifts.map((gift) => (
+					[
+						...gifts,
+						{
+							id: "custom",
+							title: "직접 입력하기",
+							description: "원하는 선물이 없다면 여기에 적어줘!",
+							image_url: caseImg, // 임시로 기존 이미지 사용
+							url: "#",
+						},
+					].map((gift) => (
 						<div key={gift.id}>
 							<Card className="overflow-hidden rounded-xl">
-								<a href={gift.url} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-105">
-									{gift.image_url && (
-										<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
-											<Image src={gift.image_url} alt={gift.title} fill className="object-contain rounded-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+								<div>
+									{gift.id === "custom" ? (
+										<div>
+											<CardTitle className="px-4">
+												<p>직접 원하는 선물 적기</p>
+											</CardTitle>
+											<div className="p-4">
+												<textarea value={customGift} onChange={(e) => setCustomGift(e.target.value)} placeholder="원하는 선물을 자유롭게 적어줘!" className="w-full h-32 p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500" />
+											</div>
 										</div>
+									) : (
+										<a href={gift.url} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-102">
+											{gift.image_url && (
+												<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
+													<Image src={gift.image_url} alt={gift.title} fill className="object-contain rounded-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+												</div>
+											)}
+											<CardHeader>
+												<CardTitle className="flex justify-between items-center mt-6">
+													<span>{gift.title}</span>
+												</CardTitle>
+											</CardHeader>
+											<CardContent>
+												<p className="text-gray-600 mt-2">{gift.description}</p>
+											</CardContent>
+										</a>
 									)}
-									<CardHeader>
-										<CardTitle className="flex justify-between items-center mt-6">
-											<span>{gift.title}</span>
-										</CardTitle>
-									</CardHeader>
-									<CardContent>
-										<p className="text-gray-600 mt-2">{gift.description}</p>
-									</CardContent>
-								</a>
+								</div>
 								<CardContent className="pt-0">
-									<Button onClick={() => handleSelectGift(gift.id)} className="w-full bg-rose-500 hover:bg-rose-600 mt-3">
+									<Button onClick={() => (gift.id === "custom" ? handleSelectGift("custom", customGift) : handleSelectGift(gift.id))} className="w-full bg-rose-500 hover:bg-rose-600 mt-3" disabled={gift.id === "custom" && !customGift.trim()}>
 										이 선물로 할게!
 									</Button>
 								</CardContent>
