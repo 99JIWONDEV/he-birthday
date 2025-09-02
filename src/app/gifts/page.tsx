@@ -72,11 +72,9 @@ const GIFT_LIST: Gift[] = [
 export default function GiftsPage() {
 	const [gifts, setGifts] = useState<Gift[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState("");
 	const [selectedGiftId, setSelectedGiftId] = useState<string | null>(null);
 	const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
 	const [customGift, setCustomGift] = useState("");
-	const [nickname, setNickname] = useState<string>("");
 
 	useEffect(() => {
 		const initializeData = async () => {
@@ -96,20 +94,18 @@ export default function GiftsPage() {
 		};
 
 		initializeData();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const fetchUserProfile = async () => {
 		try {
 			const {
-				data: { user },
+				data: { user: _user },
 				error,
 			} = await supabase.auth.getUser();
 			if (error) throw error;
-			if (user?.user_metadata?.nickname) {
-				setNickname(user.user_metadata.nickname);
-			}
 		} catch (err) {
-			console.error("사용자 정보 가져오기 실패:", err);
+			console.error("사용자 정보 가져오기 실패:", err instanceof Error ? err.message : err);
 		}
 	};
 
@@ -151,7 +147,7 @@ export default function GiftsPage() {
 			fetchGifts();
 			return false;
 		} catch (err) {
-			console.error("선택된 선물 확인 중 오류:", err);
+			console.error("선택된 선물 확인 중 오류:", err instanceof Error ? err.message : err);
 			fetchGifts();
 			return false;
 		}
@@ -171,15 +167,13 @@ export default function GiftsPage() {
 			if (deleteError) throw deleteError;
 
 			// 새로운 선택 추가
-			const { error: insertError } = await supabase.from("selected_gifts").insert([
-				{
-					gift_id: giftId,
-					user_id: user.id,
-					user_email: user.email,
-					custom_description: customDescription,
-				},
-			]);
+			const insertData = {
+				gift_id: giftId,
+				user_id: user.id,
+				custom_description: customDescription,
+			};
 
+			const { error: insertError } = await supabase.from("selected_gifts").insert([insertData]);
 			if (insertError) throw insertError;
 
 			if (giftId === "custom") {
@@ -200,7 +194,7 @@ export default function GiftsPage() {
 				}
 			}
 		} catch (err) {
-			console.error("선물 선택 중 오류:", err);
+			console.error("선물 선택 중 오류:", err instanceof Error ? err.message : err);
 		}
 	};
 
@@ -221,12 +215,11 @@ export default function GiftsPage() {
 			setSelectedGift(null);
 			fetchGifts();
 		} catch (err) {
-			console.error("선물 선택 초기화 중 오류:", err);
+			console.error("선물 선택 초기화 중 오류:", err instanceof Error ? err.message : err);
 		}
 	};
 
 	if (loading) return <div className="text-center p-8">로딩 중...</div>;
-	if (error) return <div className="text-center p-8 text-red-500">{error}</div>;
 
 	return (
 		<div className="container mx-auto px-4 pt-4 pb-14">

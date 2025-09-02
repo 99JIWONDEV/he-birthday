@@ -11,8 +11,7 @@ export async function POST(request: Request) {
 			return NextResponse.json({ error: "이메일이 필요합니다." }, { status: 400 });
 		}
 
-		const cookieStore = await cookies();
-		const supabase = createRouteHandlerClient({ cookies: () => cookieStore });
+		// const supabase = createRouteHandlerClient({ cookies });
 
 		// 서비스 롤 키를 사용하여 관리자 권한으로 사용자 검색
 		const adminClient = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);

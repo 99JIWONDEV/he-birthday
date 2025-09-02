@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/ui/header";
-import { AuthError } from "@supabase/supabase-js";
 
 interface SignUpForm {
 	email: string;

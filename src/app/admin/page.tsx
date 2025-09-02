@@ -8,6 +8,11 @@ interface UserGift {
 	selectedGift: string;
 }
 
+interface SupabaseUser {
+	id: string;
+	email?: string;
+}
+
 const GIFT_MAP: { [key: string]: string } = {
 	"1": "백팩",
 	"2": "스탠드오일 가방",
@@ -27,13 +32,20 @@ export default function AdminPage() {
 
 	const fetchUserGifts = async () => {
 		try {
-			// 선물 선택 정보와 사용자 이메일을 함께 가져오기
-			const { data: selectedGifts, error: giftError } = await supabase.from("selected_gifts").select("user_email, gift_id, custom_description");
+			// 선물 선택 정보와 사용자 ID를 함께 가져오기
+			const { data: selectedGifts, error: giftError } = await supabase.from("selected_gifts").select("user_id, gift_id, custom_description");
 
 			if (giftError) {
 				console.error("Gift error:", giftError);
 				throw giftError;
 			}
+
+			// 사용자 정보를 가져와서 이메일과 매핑
+			const usersResponse = await fetch("/api/admin/users");
+			if (!usersResponse.ok) {
+				throw new Error("사용자 정보를 가져오는데 실패했습니다.");
+			}
+			const { users } = await usersResponse.json();
 
 			// 데이터 매핑
 			const mappedData: UserGift[] =
@@ -46,8 +58,12 @@ export default function AdminPage() {
 						giftName = GIFT_MAP[gift.gift_id] || "-";
 					}
 
+					// 사용자 ID로 이메일 찾기
+					const user = users?.find((u: SupabaseUser) => u.id === gift.user_id);
+					const email = user?.email || "-";
+
 					return {
-						email: gift.user_email || "-",
+						email: email,
 						selectedGift: giftName,
 					};
 				}) || [];
