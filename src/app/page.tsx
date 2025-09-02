@@ -31,7 +31,7 @@ export default function Home() {
 	return (
 		<div className="min-h-screen flex items-center justify-center">
 			{isConfettiActive && <ReactConfetti width={windowSize.width} height={windowSize.height} numberOfPieces={200} recycle={false} colors={["#ff0000", "#ffd700", "#ff69b4", "#00ff00", "#ff4500"]} />}
-			<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative">
+			<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative mt-10">
 				<h1 className="text-4xl font-extrabold text-rose-600">하은아 생일축하해 🎉</h1>
 				<p className="text-gray-600 font-bold">
 					어느새 우리가 만난지 일년이 되어가고 <br />

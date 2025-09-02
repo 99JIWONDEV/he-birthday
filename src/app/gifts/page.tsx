@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -70,32 +71,75 @@ const GIFT_LIST: Gift[] = [
 ];
 
 export default function GiftsPage() {
+	const router = useRouter();
 	const [gifts, setGifts] = useState<Gift[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [selectedGiftId, setSelectedGiftId] = useState<string | null>(null);
 	const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
 	const [customGift, setCustomGift] = useState("");
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
 	useEffect(() => {
-		const initializeData = async () => {
+		const checkAuth = async () => {
 			try {
-				setLoading(true);
-				// 먼저 사용자 정보와 선택된 선물 정보를 가져옴
-				await fetchUserProfile();
-				const hasSelectedGift = await checkSelectedGift();
+				const {
+					data: { user },
+					error,
+				} = await supabase.auth.getUser();
 
-				// 선택된 선물이 없을 때만 전체 선물 목록을 가져옴
-				if (!hasSelectedGift) {
-					await fetchGifts();
+				if (error || !user) {
+					setIsAuthenticated(false);
+					router.push("/login");
+					return;
 				}
-			} finally {
-				setLoading(false);
+
+				setIsAuthenticated(true);
+			} catch (err) {
+				console.error("인증 확인 중 오류:", err);
+				setIsAuthenticated(false);
+				router.push("/login");
 			}
 		};
 
-		initializeData();
+		checkAuth();
+
+		// 실시간 인증 상태 변화 감지
+		const {
+			data: { subscription },
+		} = supabase.auth.onAuthStateChange((event, session) => {
+			if (event === "SIGNED_OUT" || !session) {
+				setIsAuthenticated(false);
+				router.push("/login");
+			} else if (event === "SIGNED_IN" && session) {
+				setIsAuthenticated(true);
+			}
+		});
+
+		return () => subscription.unsubscribe();
+	}, [router]);
+
+	useEffect(() => {
+		if (isAuthenticated === true) {
+			const initializeData = async () => {
+				try {
+					setLoading(true);
+					// 먼저 사용자 정보와 선택된 선물 정보를 가져옴
+					await fetchUserProfile();
+					const hasSelectedGift = await checkSelectedGift();
+
+					// 선택된 선물이 없을 때만 전체 선물 목록을 가져옴
+					if (!hasSelectedGift) {
+						await fetchGifts();
+					}
+				} finally {
+					setLoading(false);
+				}
+			};
+
+			initializeData();
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [isAuthenticated]);
 
 	const fetchUserProfile = async () => {
 		try {
@@ -218,6 +262,26 @@ export default function GiftsPage() {
 			console.error("선물 선택 초기화 중 오류:", err instanceof Error ? err.message : err);
 		}
 	};
+
+	// 인증 확인 중
+	if (isAuthenticated === null) {
+		return <div className="text-center p-8">인증 확인 중...</div>;
+	}
+
+	// 인증되지 않은 사용자
+	if (isAuthenticated === false) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-screen">
+				<div className="text-center p-8">
+					<h1 className="text-2xl font-bold text-rose-600 mb-4">로그인이 필요합니다</h1>
+					<p className="text-gray-600 mb-6">선물을 보려면 로그인해주세요.</p>
+					<Button onClick={() => router.push("/login")} className="bg-rose-500 hover:bg-rose-600">
+						로그인하러 가기
+					</Button>
+				</div>
+			</div>
+		);
+	}
 
 	if (loading) return <div className="text-center p-8">로딩 중...</div>;
 
