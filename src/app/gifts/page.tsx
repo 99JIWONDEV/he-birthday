@@ -222,109 +222,113 @@ export default function GiftsPage() {
 	if (loading) return <div className="text-center p-8">로딩 중...</div>;
 
 	return (
-		<div className="container mx-auto px-4 pt-4 pb-14">
+		<>
 			<Header />
-			<div className="text-center mb-8 mt-10">
-				<h1 className="text-3xl font-bold text-rose-600">하은 선물 리스트</h1>
-				<p className="mt-2 text-gray-600">9월 5일까지 원하는 선물을 선택해줘!</p>
-				<p className="text-gray-600">선물은 9월 5일 전까지 변경할 수 있어!</p>
-				<div className="mt-2">
-					<CountdownTimer />
-				</div>
-			</div>
-			<div>
-				<p className="text-gray-600 text-xs text-center mb-4">카드를 클릭하면 상세페이지로 이동해</p>
-			</div>
-			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				{selectedGift ? (
-					<Card key={selectedGift.id} className="overflow-hidden rounded-xl">
-						{selectedGift.id === "custom" ? (
-							<div className="p-6">
-								<h3 className="text-xl font-bold mb-4">{selectedGift.title}</h3>
-								<div className="bg-gray-50 p-4 rounded-lg mb-4">
-									<p className="text-gray-700 whitespace-pre-wrap">{selectedGift.description}</p>
-								</div>
-								<Button disabled className="w-full bg-green-500">
-									내가 입력한 선물
-								</Button>
-							</div>
-						) : (
-							<a href={selectedGift.url} target="_blank" rel="noopener noreferrer" className="block">
-								<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
-									<Image src={selectedGift.image_url} alt={selectedGift.title} fill className="object-contain rounded-t-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-								</div>
-								<CardHeader>
-									<CardTitle className="flex justify-between items-center mt-6">
-										<span>{selectedGift.title}</span>
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<p className="text-gray-600 mt-2">{selectedGift.description}</p>
-									<Button disabled className="w-full bg-green-500 mt-4">
-										내가 선택한 선물
-									</Button>
-								</CardContent>
-							</a>
-						)}
-					</Card>
-				) : (
-					[
-						...gifts,
-						{
-							id: "custom",
-							title: "직접 입력하기",
-							description: "원하는 선물이 없다면 여기에 적어줘!",
-							image_url: caseImg, // 임시로 기존 이미지 사용
-							url: "#",
-						},
-					].map((gift) => (
-						<div key={gift.id}>
-							<Card className="overflow-hidden rounded-xl">
-								<div>
-									{gift.id === "custom" ? (
-										<div>
-											<CardTitle className="px-4">
-												<p>직접 원하는 선물 적기</p>
-											</CardTitle>
-											<div className="p-4">
-												<textarea value={customGift} onChange={(e) => setCustomGift(e.target.value)} placeholder="원하는 선물을 자유롭게 적어줘!" className="w-full h-32 p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500" />
-											</div>
-										</div>
-									) : (
-										<a href={gift.url} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-102">
-											{gift.image_url && (
-												<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
-													<Image src={gift.image_url} alt={gift.title} fill className="object-contain rounded-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
-												</div>
-											)}
-											<CardHeader>
-												<CardTitle className="flex justify-between items-center mt-6">
-													<span>{gift.title}</span>
-												</CardTitle>
-											</CardHeader>
-											<CardContent>
-												<p className="text-gray-600 mt-2">{gift.description}</p>
-											</CardContent>
-										</a>
-									)}
-								</div>
-								<CardContent className="pt-0">
-									<Button onClick={() => (gift.id === "custom" ? handleSelectGift("custom", customGift) : handleSelectGift(gift.id))} className="w-full bg-rose-500 hover:bg-rose-600 mt-3" disabled={gift.id === "custom" && !customGift.trim()}>
-										이 선물로 할게!
-									</Button>
-								</CardContent>
-							</Card>
+			<div className="flex-1 overflow-y-auto bg-gradient-to-b from-rose-50 to-rose-100">
+				<div className="container mx-auto px-4 py-4">
+					<div className="text-center mb-8 mt-10">
+						<h1 className="text-3xl font-bold text-rose-600">하은 선물 리스트</h1>
+						<p className="mt-2 text-gray-600">9월 5일까지 원하는 선물을 선택해줘!</p>
+						<p className="text-gray-600">선물은 9월 5일 전까지 변경할 수 있어!</p>
+						<div className="mt-2">
+							<CountdownTimer />
 						</div>
-					))
-				)}
-			</div>
-			{selectedGiftId && (
-				<div className="text-center mt-8">
-					<Button onClick={resetGiftSelection} variant="outline" className="bg-white text-rose-600 border-rose-600 hover:bg-rose-50">
-						선물 다시 고르기
-					</Button>
+					</div>
+					<div>
+						<p className="text-gray-600 text-xs text-center mb-4">카드를 클릭하면 상세페이지로 이동해</p>
+					</div>
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+						{selectedGift ? (
+							<Card key={selectedGift.id} className="overflow-hidden rounded-xl">
+								{selectedGift.id === "custom" ? (
+									<div className="p-6">
+										<h3 className="text-xl font-bold mb-4">{selectedGift.title}</h3>
+										<div className="bg-gray-50 p-4 rounded-lg mb-4">
+											<p className="text-gray-700 whitespace-pre-wrap">{selectedGift.description}</p>
+										</div>
+										<Button disabled className="w-full bg-green-500">
+											내가 입력한 선물
+										</Button>
+									</div>
+								) : (
+									<a href={selectedGift.url} target="_blank" rel="noopener noreferrer" className="block">
+										<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
+											<Image src={selectedGift.image_url} alt={selectedGift.title} fill className="object-contain rounded-t-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+										</div>
+										<CardHeader>
+											<CardTitle className="flex justify-between items-center mt-6">
+												<span>{selectedGift.title}</span>
+											</CardTitle>
+										</CardHeader>
+										<CardContent>
+											<p className="text-gray-600 mt-2">{selectedGift.description}</p>
+											<Button disabled className="w-full bg-green-500 mt-4">
+												내가 선택한 선물
+											</Button>
+										</CardContent>
+									</a>
+								)}
+							</Card>
+						) : (
+							[
+								...gifts,
+								{
+									id: "custom",
+									title: "직접 입력하기",
+									description: "원하는 선물이 없다면 여기에 적어줘!",
+									image_url: caseImg, // 임시로 기존 이미지 사용
+									url: "#",
+								},
+							].map((gift) => (
+								<div key={gift.id}>
+									<Card className="overflow-hidden rounded-xl">
+										<div>
+											{gift.id === "custom" ? (
+												<div>
+													<CardTitle className="px-4">
+														<p>직접 원하는 선물 적기</p>
+													</CardTitle>
+													<div className="p-4">
+														<textarea value={customGift} onChange={(e) => setCustomGift(e.target.value)} placeholder="원하는 선물을 자유롭게 적어줘!" className="w-full h-32 p-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-rose-500" />
+													</div>
+												</div>
+											) : (
+												<a href={gift.url} target="_blank" rel="noopener noreferrer" className="block transition-transform hover:scale-102">
+													{gift.image_url && (
+														<div className="relative w-full h-48 rounded-t-xl overflow-hidden">
+															<Image src={gift.image_url} alt={gift.title} fill className="object-contain rounded-xl" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
+														</div>
+													)}
+													<CardHeader>
+														<CardTitle className="flex justify-between items-center mt-6">
+															<span>{gift.title}</span>
+														</CardTitle>
+													</CardHeader>
+													<CardContent>
+														<p className="text-gray-600 mt-2">{gift.description}</p>
+													</CardContent>
+												</a>
+											)}
+										</div>
+										<CardContent className="pt-0">
+											<Button onClick={() => (gift.id === "custom" ? handleSelectGift("custom", customGift) : handleSelectGift(gift.id))} className="w-full bg-rose-500 hover:bg-rose-600 mt-3" disabled={gift.id === "custom" && !customGift.trim()}>
+												이 선물로 할게!
+											</Button>
+										</CardContent>
+									</Card>
+								</div>
+							))
+						)}
+					</div>
+					{selectedGiftId && (
+						<div className="text-center mt-8">
+							<Button onClick={resetGiftSelection} variant="outline" className="bg-white text-rose-600 border-rose-600 hover:bg-rose-50">
+								선물 다시 고르기
+							</Button>
+						</div>
+					)}
 				</div>
-			)}
-		</div>
+			</div>
+		</>
 	);
 }

@@ -30,24 +30,26 @@ export default function InfoPage() {
 		return () => clearInterval(timer);
 	}, [currentIndex]);
 	return (
-		<div className="min-h-screen flex items-center justify-center">
+		<>
 			<Header />
-			<div className="container mx-auto px-4 text-center flex flex-col relative">
-				<div className="h-20 flex items-center justify-center">
-					<div className={`text-lg font-medium transition-opacity duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`} dangerouslySetInnerHTML={{ __html: messages[currentIndex] }} />
-				</div>
-				{showButton && (
-					<div className="h-20 flex items-center justify-center -mt-16">
-						<Link href="/login" className="animate-pulse-scale inline-flex items-center gap-1 text-rose-600 text-lg font-medium hover:text-rose-700 relative group">
-							<span className="relative">
-								로그인 하러 가기
-								<span className="absolute left-0 right-0 bottom-0 h-0.5 bg-rose-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
-							</span>
-							<ChevronRight className="w-5 h-5" />
-						</Link>
+			<div className="flex-1 flex items-center justify-center -mt-[120px]">
+				<div className="container mx-auto px-4 text-center flex flex-col relative">
+					<div className="h-20 flex items-center justify-center">
+						<div className={`text-lg font-medium transition-opacity duration-500 ${showMessage ? "opacity-100" : "opacity-0"}`} dangerouslySetInnerHTML={{ __html: messages[currentIndex] }} />
 					</div>
-				)}
+					{showButton && (
+						<div className="h-20 flex items-center justify-center -mt-16">
+							<Link href="/login" className="animate-pulse-scale inline-flex items-center gap-1 text-rose-600 text-lg font-medium hover:text-rose-700 relative group">
+								<span className="relative">
+									로그인 하러 가기
+									<span className="absolute left-0 right-0 bottom-0 h-0.5 bg-rose-600 scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+								</span>
+								<ChevronRight className="w-5 h-5" />
+							</Link>
+						</div>
+					)}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }

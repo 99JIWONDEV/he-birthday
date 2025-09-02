@@ -40,33 +40,35 @@ const memories = [
 
 export default function MemoriesPage() {
 	return (
-		<div className="min-h-screen flex items-center justify-center">
+		<>
 			<Header />
-			<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative">
-				<h1 className="text-2xl font-extrabold text-rose-600">우리의 추억이야 📸</h1>
-				<p className="text-gray-600 text-sm -mt-3">옆으로 넘겨봐!</p>
-				<Carousel className="w-full max-w-xl mx-auto">
-					<CarouselContent>
-						{memories.map((memory) => (
-							<CarouselItem key={memory.id}>
-								<div className="p-1">
-									<div className="overflow-hidden rounded-xl">
-										<Image src={memory.image} alt={memory.description} width={400} height={500} className="object-cover w-full" />
+			<div className="flex-1 flex items-center justify-center">
+				<div className="container mx-auto px-4 text-center flex flex-col gap-4 relative">
+					<h1 className="text-2xl font-extrabold text-rose-600">우리의 추억이야 📸</h1>
+					<p className="text-gray-600 text-sm -mt-3">옆으로 넘겨봐!</p>
+					<Carousel className="w-full max-w-xl mx-auto">
+						<CarouselContent>
+							{memories.map((memory) => (
+								<CarouselItem key={memory.id}>
+									<div className="p-1">
+										<div className="overflow-hidden rounded-xl">
+											<Image src={memory.image} alt={memory.description} width={400} height={500} className="object-cover w-full" />
+										</div>
+										<p className="mt-4 text-gray-700">{memory.description}</p>
 									</div>
-									<p className="mt-4 text-gray-700">{memory.description}</p>
-								</div>
-							</CarouselItem>
-						))}
-					</CarouselContent>
-					<CarouselPrevious className="left-2" />
-					<CarouselNext className="right-2" />
-				</Carousel>
-				<div className="space-y-4">
-					<LinkButton href="/info" className="mt-4">
-						다음
-					</LinkButton>
+								</CarouselItem>
+							))}
+						</CarouselContent>
+						<CarouselPrevious className="left-2" />
+						<CarouselNext className="right-2" />
+					</Carousel>
+					<div className="space-y-4">
+						<LinkButton href="/info" className="mt-4">
+							다음
+						</LinkButton>
+					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 }

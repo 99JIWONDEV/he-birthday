@@ -44,8 +44,10 @@ export default function RootLayout({
 	return (
 		<html lang="ko">
 			<body className={inter.className}>
-				<main className="min-h-screen bg-gradient-to-b from-rose-50 to-rose-100">{children}</main>
-				<Footer />
+				<div className="h-screen bg-gradient-to-b from-rose-50 to-rose-100 flex flex-col">
+					<main className="flex-1 flex flex-col">{children}</main>
+					<Footer />
+				</div>
 			</body>
 		</html>
 	);
