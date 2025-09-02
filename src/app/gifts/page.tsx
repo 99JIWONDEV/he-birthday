@@ -232,8 +232,10 @@ export default function GiftsPage() {
 					<CountdownTimer />
 				</div>
 			</div>
+			<div>
+				<p className="text-gray-600 text-xs text-center mb-4">카드를 클릭하면 상세페이지로 이동해</p>
+			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-				<p className="text-gray-600 text-xs text-center -mb-10">카드를 클릭하면 상세페이지로 이동해</p>
 				{selectedGift ? (
 					<Card key={selectedGift.id} className="overflow-hidden rounded-xl">
 						{selectedGift.id === "custom" ? (
